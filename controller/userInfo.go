@@ -8,10 +8,37 @@ import (
 
 // ListUsersInfo 列出所有用户信息
 func ListUsersInfo(c *gin.Context) {
-	users := services.QueryAllUserInfo()
-	c.JSON(http.StatusOK, users)
+	switch c.Request.Method {
+	case http.MethodGet:
+		users := services.QueryAllUserInfo()
+		c.JSON(http.StatusOK, users)
+	case http.MethodPost:
+		type CreateUserInfo struct {
+			Password string  `form:"password" json:"password" binding:"required"`
+			Email    string  `form:"email" json:"email" binding:"required,email"`
+			MFA      *string `form:"mfa" json:"mfa" binding:"omitempty"`
+		}
+
+		var createUser CreateUserInfo
+		err := c.ShouldBind(&createUser)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		user, err := services.AddUserInfo(createUser.Email, createUser.Password, *createUser.MFA)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, user)
+	}
 }
 
+// UpdateUsersToken 更新用户Token
 func UpdateUsersToken(c *gin.Context) {
 	switch c.Request.Method {
 	case http.MethodPut:

@@ -5,6 +5,7 @@ import (
 	"goPandoraAdmin-Server/database"
 	"goPandoraAdmin-Server/internal/pandora"
 	"goPandoraAdmin-Server/model"
+	"time"
 )
 
 // QueryAllUserInfo 查询所有用户信息
@@ -24,7 +25,7 @@ func UpdateUserInfo(userID string) (model.UserInfo, error) {
 	if res.RowsAffected == 0 {
 		return user, fmt.Errorf("user not found")
 	}
-	token, refreshToken, err := pandora.Auth0(user.Email, user.Password, "", "")
+	token, refreshToken, err := pandora.Auth0(user.Email, user.Password, "")
 	if err != nil {
 		return user, fmt.Errorf("auth0 error: %s", err)
 	}
@@ -35,5 +36,32 @@ func UpdateUserInfo(userID string) (model.UserInfo, error) {
 		return user, fmt.Errorf("check access token error: %s", err)
 	}
 	db.Save(&user)
+	return user, nil
+}
+
+func AddUserInfo(email string, password string, mfa string) (model.UserInfo, error) {
+	var user model.UserInfo
+	accessToken, refreshToken, err := pandora.Auth0(email, password, mfa)
+	if err != nil {
+		return user, fmt.Errorf("auth0 error: %s", err)
+	}
+	dec, err := pandora.CheckAccessToken(accessToken)
+	if err != nil {
+		return model.UserInfo{}, fmt.Errorf("check access token error: %s", err)
+	}
+
+	user.Email = email
+	user.Password = password
+	user.Token = accessToken
+	user.RefreshToken = refreshToken
+	user.Sub = model.SubEnum(dec.Sub)
+	user.UserID = dec.Auth.UserID
+	user.ExpiryTime = time.Unix(int64(dec.Exp), 0)
+
+	db, _ := database.GetDB()
+	res := db.FirstOrCreate(&user)
+	if res.Error != nil {
+		return user, fmt.Errorf("create user error: %s", res.Error)
+	}
 	return user, nil
 }
