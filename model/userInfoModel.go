@@ -11,10 +11,9 @@ const (
 )
 
 type UserInfo struct {
-	ID           uint `gorm:"primary_key:autoIncrement"`
 	Email        string
 	Password     string
-	UserID       string  `gorm:"unique"`
+	UserID       string  `gorm:"unique:primary_key"`
 	Sub          SubEnum `gorm:type:enum("google-oauth2","windowslive", "auth0") default:"auth0"`
 	Token        string
 	RefreshToken string
