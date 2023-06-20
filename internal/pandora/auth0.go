@@ -30,6 +30,7 @@ func Auth0(userName string, password string, mfaCode string) (accessToken string
 	transport := &http.Transport{}
 	proxyURL := getProxyURL()
 	if proxyURL != nil {
+		logger.Debug("using proxy", zap.String("url", proxyURL.String()))
 		transport.Proxy = http.ProxyURL(proxyURL) // 设置代理
 	}
 	client := http.Client{
@@ -216,6 +217,9 @@ func getProxyURL() *url.URL {
 	// 如果存在则返回代理URL，否则返回nil
 	proxyURLStr := config.Conf.ProxyNode
 	if proxyURLStr != "" {
+		if !strings.Contains(proxyURLStr, "://") {
+			proxyURLStr = "http://" + proxyURLStr
+		}
 		proxyURL, err := url.Parse(proxyURLStr)
 		if err != nil {
 			logger.Fatal("parse proxyURL error", zap.Error(err))
