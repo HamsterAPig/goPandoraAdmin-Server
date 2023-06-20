@@ -5,6 +5,7 @@ import (
 	"goPandoraAdmin-Server/database"
 	"goPandoraAdmin-Server/internal/pandora"
 	"goPandoraAdmin-Server/model"
+	"strings"
 	"time"
 )
 
@@ -54,12 +55,12 @@ func AddUserInfo(email string, password string, mfa string) (model.UserInfo, err
 	user.Password = password
 	user.Token = accessToken
 	user.RefreshToken = refreshToken
-	user.Sub = model.SubEnum(dec.Sub)
+	user.Sub = model.SubEnum(strings.Split(dec.Sub, "|")[0])
 	user.UserID = dec.Auth.UserID
 	user.ExpiryTime = time.Unix(int64(dec.Exp), 0)
 
 	db, _ := database.GetDB()
-	res := db.FirstOrCreate(&user)
+	res := db.Save(&user)
 	if res.Error != nil {
 		return user, fmt.Errorf("create user error: %s", res.Error)
 	}
