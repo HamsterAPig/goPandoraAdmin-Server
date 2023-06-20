@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go.uber.org/zap"
+	"goPandoraAdmin-Server/config"
 	logger "goPandoraAdmin-Server/internal/log"
 	"io"
 	"net/http"
@@ -24,8 +25,16 @@ func Auth0(userName string, password string, mfaCode string) (accessToken string
 	if !match {
 		return "", "", fmt.Errorf("%s is not a valid email address", userName)
 	}
+
+	// 创建一个自定义的Transport
+	transport := &http.Transport{}
+	proxyURL := getProxyURL()
+	if proxyURL != nil {
+		transport.Proxy = http.ProxyURL(proxyURL) // 设置代理
+	}
 	client := http.Client{
-		Jar: createCookieJar(),
+		Jar:       createCookieJar(),
+		Transport: transport,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			// 禁用跟随301跳转
 			return http.ErrUseLastResponse
@@ -199,4 +208,21 @@ func GetTokenAndRefreshTokenByCode(code string, codeVerifier string) (string, st
 func createCookieJar() *cookiejar.Jar {
 	jar, _ := cookiejar.New(nil)
 	return jar
+}
+
+// getProxyURL 获取代理地址
+func getProxyURL() *url.URL {
+	// 检查代理地址是否存在
+	// 如果存在则返回代理URL，否则返回nil
+	proxyURLStr := config.Conf.ProxyNode
+	if proxyURLStr != "" {
+		proxyURL, err := url.Parse(proxyURLStr)
+		if err != nil {
+			logger.Fatal("parse proxyURL error", zap.Error(err))
+		}
+		logger.Debug("proxyURL", zap.String("proxyURL", proxyURL.String()))
+		return proxyURL
+	}
+
+	return nil
 }
