@@ -1,9 +1,9 @@
 package pandora
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt"
-	"github.com/mitchellh/mapstructure"
 	"strings"
 )
 
@@ -74,9 +74,14 @@ gQIDAQAB
 		return ast, fmt.Errorf("belonging to an unregistered user")
 	}
 
-	err = mapstructure.Decode(claims, &ast)
+	jsonBytes, err := json.Marshal(claims)
 	if err != nil {
-		return ast, fmt.Errorf("failed to decode payload: %v", err)
+		return ast, fmt.Errorf("failed to marshal claims")
+	}
+	// 将 JSON 转换为具体的结构体
+	err = json.Unmarshal(jsonBytes, &ast)
+	if err != nil {
+		return ast, fmt.Errorf("failed to unmarshal claims")
 	}
 	return ast, err
 }
