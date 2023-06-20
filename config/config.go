@@ -6,21 +6,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-type variableConfig struct {
+type VariableConfig struct {
 	Listen       string `mapstructure:"listen"`      // 监听地址
 	ProxyNode    string `mapstructure:"proxy"`       // 代理地址
 	DatabasePath string `mapstructure:"database"`    // 数据库路径
 	DebugLevel   string `mapstructure:"debug-level"` // 日志等级
 }
 
-var Conf = new(variableConfig)
+var Conf = new(VariableConfig)
 
-func ReadConfig() (*variableConfig, error) {
+func ReadConfig() (*VariableConfig, error) {
 	cmdViper := viper.New()
 	fileViper := viper.New()
 
 	pflag.StringP("config", "c", "", "config file path")
-	pflag.StringP("listen", "l", "", "listen address")
+	pflag.StringP("listen", "l", "127.0.0.1:8080", "listen address")
 	pflag.StringP("proxy", "p", "", "proxy address")
 	pflag.StringP("database", "d", "./goPandora.db", "database path")
 
@@ -41,7 +41,7 @@ func ReadConfig() (*variableConfig, error) {
 			return nil, fmt.Errorf("failed to merge config: %w", err)
 		}
 	}
-	var ret = new(variableConfig)
+	var ret = new(VariableConfig)
 	if err := cmdViper.Unmarshal(ret); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
