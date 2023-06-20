@@ -1,9 +1,9 @@
 package pandora
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt"
+	"github.com/mitchellh/mapstructure"
 	"strings"
 )
 
@@ -74,6 +74,9 @@ gQIDAQAB
 		return ast, fmt.Errorf("belonging to an unregistered user")
 	}
 
-	err = json.Unmarshal([]byte(accessToken), &ast)
+	err = mapstructure.Decode(claims, &ast)
+	if err != nil {
+		return ast, fmt.Errorf("failed to decode payload: %v", err)
+	}
 	return ast, err
 }
