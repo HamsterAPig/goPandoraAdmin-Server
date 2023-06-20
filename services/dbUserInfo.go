@@ -65,3 +65,17 @@ func AddUserInfo(email string, password string, mfa string) (model.UserInfo, err
 	}
 	return user, nil
 }
+
+func CheckAccessToken(userID string) error {
+	var user model.UserInfo
+	db, _ := database.GetDB()
+	res := db.Where("user_id = ?", userID).Find(&user)
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("user not found")
+	}
+	_, err := pandora.CheckAccessToken(user.Token)
+	if err != nil {
+		return fmt.Errorf("check access token error: %s", err)
+	}
+	return nil
+}

@@ -53,3 +53,17 @@ func UpdateUsersToken(c *gin.Context) {
 		c.JSON(http.StatusOK, info)
 	}
 }
+
+func CheckAccessToken(c *gin.Context) {
+	userID := c.Param("userID")
+	err := services.CheckAccessToken(userID)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
