@@ -18,7 +18,7 @@ const (
 	OpenAI  SubEnum = "auth0"
 )
 
-type User struct {
+type UserInfo struct {
 	ID           uint `gorm:"primary_key:autoIncrement"`
 	Email        string
 	Password     string

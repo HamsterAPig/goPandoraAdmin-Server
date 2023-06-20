@@ -16,7 +16,7 @@ type ShareToken struct {
 	Comment       string
 }
 
-type faseOpenShareToken struct {
+type fakeOpenShareToken struct {
 	ExpireAt          int64  `json:"expire_at"`
 	ShowConversations bool   `json:"show_conversations"`
 	ShowUserinfo      bool   `json:"show_userinfo"`
