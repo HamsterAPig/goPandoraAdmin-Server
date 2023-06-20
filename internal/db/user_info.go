@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"go.uber.org/zap"
 	logger "goPandoraAdmin-Server/internal/log"
 	"gorm.io/driver/sqlite"
@@ -30,13 +29,6 @@ type User struct {
 	UpdatedTime  time.Time `gorm:"autoUpdateTime"`
 	ExpiryTime   time.Time
 	Comment      string
-}
-
-type UserToken struct {
-	UUID    uuid.UUID `gorm:"primaryKey;type:char(36);not null;unique"`
-	UserID  string
-	Token   string
-	Comment string
 }
 
 var db *gorm.DB
@@ -80,10 +72,4 @@ func CloseDB() {
 			return
 		}
 	}
-}
-
-// BeforeCreate 向User表插入数据后自动添加UUID
-func (u *UserToken) BeforeCreate(tx *gorm.DB) error {
-	u.UUID = uuid.New()
-	return nil
 }
