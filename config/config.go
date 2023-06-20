@@ -23,6 +23,7 @@ func ReadConfig() (*VariableConfig, error) {
 	pflag.StringP("listen", "l", "127.0.0.1:8080", "listen address")
 	pflag.StringP("proxy", "p", "", "proxy address")
 	pflag.StringP("database", "d", "./goPandora.db", "database path")
+	pflag.Parse()
 
 	err := cmdViper.BindPFlags(pflag.CommandLine)
 	if err != nil {
