@@ -142,6 +142,9 @@ func Auth0(userName string, password string, mfaCode string, proxy string) (acce
 	}
 	location = resp4.Header.Get("Location")
 	logger.Debug("location", zap.String("location", location))
+	if strings.Contains(location, "unsupported_country") {
+		return "", "", fmt.Errorf("your country is not supported")
+	}
 	parsedURL, err = url.Parse(location)
 	if err != nil {
 		return "", "", fmt.Errorf("parse location error: %s", err)
