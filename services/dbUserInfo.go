@@ -18,6 +18,13 @@ func QueryAllUserInfo() []model.UserInfo {
 	return users
 }
 
+func QueryUserInfoByUserID(userID string) (model.UserInfo, error) {
+	db, _ := database.GetDB()
+	var user model.UserInfo
+	db.Where("user_id = ?", userID).Find(&user)
+	return user, nil
+}
+
 // UpdateUserInfo 更新用户Token
 func UpdateUserInfo(userID string) (model.UserInfo, error) {
 	db, _ := database.GetDB()

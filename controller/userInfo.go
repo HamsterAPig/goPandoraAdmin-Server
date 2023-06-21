@@ -40,9 +40,9 @@ func ListUsersInfo(c *gin.Context) {
 
 // UpdateUsersToken 更新用户Token
 func UpdateUsersToken(c *gin.Context) {
+	userID := c.Param("userID")
 	switch c.Request.Method {
 	case http.MethodPut:
-		userID := c.Param("userID")
 		info, err := services.UpdateUserInfo(userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -51,6 +51,9 @@ func UpdateUsersToken(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, info)
+	default:
+		user, _ := services.QueryUserInfoByUserID(userID)
+		c.JSON(http.StatusOK, user)
 	}
 }
 
