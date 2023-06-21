@@ -13,6 +13,8 @@ func BackstageRouter() http.Handler {
 		v1.Any("/users", controller.ListUsersInfo)
 		v1.Any("/users/:userID", controller.UpdateUsersToken)
 		v1.GET("/users/:userID/check", controller.CheckAccessToken)
+
+		v1.Any("/auto-login-infos", controller.AutoLoginInfos)
 	}
 	return r
 }
