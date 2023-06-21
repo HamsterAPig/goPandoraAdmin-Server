@@ -15,6 +15,7 @@ func BackstageRouter() http.Handler {
 		v1.GET("/users/:userID/check", controller.CheckAccessToken)
 
 		v1.Any("/auto-login-infos", controller.AutoLoginInfos)
+		v1.Any("/auto-login-infos/:UUID", controller.AutoLoginInfosByUUID)
 	}
 	return r
 }
