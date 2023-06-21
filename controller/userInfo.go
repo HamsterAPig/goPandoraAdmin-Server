@@ -42,7 +42,7 @@ func ListUsersInfo(c *gin.Context) {
 func UpdateUsersToken(c *gin.Context) {
 	userID := c.Param("userID")
 	switch c.Request.Method {
-	case http.MethodPut:
+	case http.MethodPatch:
 		info, err := services.UpdateUserInfo(userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
