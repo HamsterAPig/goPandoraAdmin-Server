@@ -48,7 +48,7 @@ gQIDAQAB
 	})
 
 	if nil != err {
-		return ast, fmt.Errorf("failed to parse token: %v", err)
+		return ast, fmt.Errorf("failed to parse token: %v, %v", err, accessToken)
 	}
 
 	// 验证 JWT 的有效性

@@ -202,6 +202,7 @@ func GetTokenAndRefreshTokenByCode(code string, codeVerifier string) (string, st
 	if err != nil {
 		return "", "", fmt.Errorf("json unmarshal error: %s", err)
 	}
+	logger.Debug("data", zap.Any("data", data["access_token"].(string)))
 	return data["access_token"].(string), data["refresh_token"].(string), nil
 }
 

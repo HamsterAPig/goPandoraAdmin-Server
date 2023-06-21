@@ -59,6 +59,15 @@ func AddUserInfo(email string, password string, mfa string) (model.UserInfo, err
 	user.UserID = dec.Auth.UserID
 	user.ExpiryTime = time.Unix(int64(dec.Exp), 0)
 
+	info, err := updateUserInfo(user)
+	if err != nil {
+		return info, err
+	}
+	return user, nil
+}
+
+// updateUserInfo 更新用户信息表
+func updateUserInfo(user model.UserInfo) (model.UserInfo, error) {
 	db, _ := database.GetDB()
 	res := db.Save(&user)
 	if res.Error != nil {
