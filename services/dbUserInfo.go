@@ -76,6 +76,7 @@ func AddUserInfo(createInfo model.CreateUserInfoRequest) (model.UserInfo, error)
 	user.Sub = model.SubEnum(strings.Split(dec.Sub, "|")[0])
 	user.UserID = dec.Auth.UserID
 	user.ExpiryTime = time.Unix(int64(dec.Exp), 0)
+	user.Comment = *createInfo.Comment
 
 	info, err := updateUserInfo(user)
 	if err != nil {

@@ -23,7 +23,7 @@ func ListUsersInfo(c *gin.Context) {
 			})
 			return
 		}
-		user, err := services.AddUserInfo(createUser.Email, createUser.Password, *createUser.MFA)
+		user, err := services.AddUserInfo(createUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
