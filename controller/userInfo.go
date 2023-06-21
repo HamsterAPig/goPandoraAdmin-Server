@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"goPandoraAdmin-Server/model"
 	"goPandoraAdmin-Server/services"
 	"net/http"
 )
@@ -13,13 +14,8 @@ func ListUsersInfo(c *gin.Context) {
 		users := services.QueryAllUserInfo()
 		c.JSON(http.StatusOK, users)
 	case http.MethodPost:
-		type CreateUserInfo struct {
-			Password string  `form:"password" json:"password" binding:"required"`
-			Email    string  `form:"email" json:"email" binding:"required,email"`
-			MFA      *string `form:"mfa" json:"mfa" binding:"omitempty"`
-		}
 
-		var createUser CreateUserInfo
+		var createUser model.CreateUserInfoRequest
 		err := c.ShouldBind(&createUser)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
