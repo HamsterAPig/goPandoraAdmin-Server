@@ -18,11 +18,22 @@ func QueryAllUserInfo() []model.UserInfo {
 	return users
 }
 
+// QueryUserInfoByUserID 查询单个用户信息
 func QueryUserInfoByUserID(userID string) (model.UserInfo, error) {
 	db, _ := database.GetDB()
 	var user model.UserInfo
 	db.Where("user_id = ?", userID).Find(&user)
 	return user, nil
+}
+
+func DeleteUserInfoByUserID(userID string) error {
+	db, _ := database.GetDB()
+	var user model.UserInfo
+	res := db.Where("user_id = ?", userID).Delete(&user)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
 }
 
 // UpdateUserInfo 更新用户Token

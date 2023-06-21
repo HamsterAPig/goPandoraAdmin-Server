@@ -38,7 +38,7 @@ func ListUsersInfo(c *gin.Context) {
 	}
 }
 
-// UpdateUsersToken 更新用户Token
+// UpdateUsersToken 更新单个用户Token
 func UpdateUsersToken(c *gin.Context) {
 	userID := c.Param("userID")
 	switch c.Request.Method {
@@ -51,6 +51,17 @@ func UpdateUsersToken(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, info)
+	case http.MethodDelete:
+		err := services.DeleteUserInfoByUserID(userID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+		})
 	default:
 		user, _ := services.QueryUserInfoByUserID(userID)
 		c.JSON(http.StatusOK, user)
