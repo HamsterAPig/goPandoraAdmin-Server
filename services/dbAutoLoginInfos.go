@@ -28,6 +28,7 @@ func QueryAllAutoLoginInfosByUUID(UUID string) (model.AutoLoginInfo, error) {
 	return autoLoginInfo, nil
 }
 
+// CreateAutoLoginInfos 创建自动登录信息
 func CreateAutoLoginInfos(autoLoginInfo model.CreatedAutoLoginInfoRequest) (model.AutoLoginInfo, error) {
 	db, _ := database.GetDB()
 	var info model.AutoLoginInfo
@@ -49,4 +50,16 @@ func CreateAutoLoginInfos(autoLoginInfo model.CreatedAutoLoginInfoRequest) (mode
 		return info, fmt.Errorf("failed to save auto login info to db")
 	}
 	return info, nil
+}
+
+// DeleteAutoLoginInfo 删除自动登录信息
+func DeleteAutoLoginInfo(uuid string) error {
+	db, _ := database.GetDB()
+	var info model.AutoLoginInfo
+	res := db.Where("uuid = ?", uuid).First(&info)
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("user not found")
+	}
+	res = db.Delete(&info)
+	return res.Error
 }

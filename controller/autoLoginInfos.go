@@ -33,6 +33,18 @@ func AutoLoginInfos(c *gin.Context) {
 
 func AutoLoginInfosByUUID(c *gin.Context) {
 	switch c.Request.Method {
+	case http.MethodDelete:
+		uuid := c.Param("UUID")
+		err := services.DeleteAutoLoginInfo(uuid)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+		})
 	default:
 		UUID := c.Param("UUID")
 		infos, err := services.QueryAllAutoLoginInfosByUUID(UUID)
