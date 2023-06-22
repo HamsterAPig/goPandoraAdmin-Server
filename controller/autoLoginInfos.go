@@ -7,7 +7,8 @@ import (
 	"net/http"
 )
 
-func AutoLoginInfos(c *gin.Context) {
+// AutoLoginInfosManage 自动登陆信息管理
+func AutoLoginInfosManage(c *gin.Context) {
 	switch c.Request.Method {
 	case http.MethodPost:
 		var autoLoginInfo model.CreatedAutoLoginInfoRequest
@@ -31,7 +32,7 @@ func AutoLoginInfos(c *gin.Context) {
 	}
 }
 
-func AutoLoginInfosByUUID(c *gin.Context) {
+func SingleAutoLoginInfosManage(c *gin.Context) {
 	switch c.Request.Method {
 	case http.MethodDelete:
 		uuid := c.Param("UUID")

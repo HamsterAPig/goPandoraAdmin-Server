@@ -10,12 +10,12 @@ func BackstageRouter() http.Handler {
 	r := gin.Default()
 	v1 := r.Group("/api/v1")
 	{
-		v1.Any("/users", controller.ListUsersInfo)
-		v1.Any("/users/:userID", controller.UpdateUsersToken)
+		v1.Any("/users", controller.UserInfosManage)
+		v1.Any("/users/:userID", controller.SingleUserInfosManage)
 		v1.GET("/users/:userID/check", controller.CheckAccessToken)
 
-		v1.Any("/auto-login-infos", controller.AutoLoginInfos)
-		v1.Any("/auto-login-infos/:UUID", controller.AutoLoginInfosByUUID)
+		v1.Any("/auto-login-infos", controller.AutoLoginInfosManage)
+		v1.Any("/auto-login-infos/:UUID", controller.SingleAutoLoginInfosManage)
 	}
 	return r
 }

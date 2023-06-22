@@ -7,8 +7,8 @@ import (
 	"net/http"
 )
 
-// ListUsersInfo 列出所有用户信息
-func ListUsersInfo(c *gin.Context) {
+// UserInfosManage 列出所有用户信息
+func UserInfosManage(c *gin.Context) {
 	switch c.Request.Method {
 	case http.MethodGet:
 		users := services.QueryAllUserInfo()
@@ -34,8 +34,8 @@ func ListUsersInfo(c *gin.Context) {
 	}
 }
 
-// UpdateUsersToken 更新单个用户Token
-func UpdateUsersToken(c *gin.Context) {
+// SingleUserInfosManage 更新单个用户Token
+func SingleUserInfosManage(c *gin.Context) {
 	userID := c.Param("userID")
 	switch c.Request.Method {
 	case http.MethodPatch:
