@@ -17,3 +17,8 @@ func (u *AutoLoginInfo) BeforeCreate(tx *gorm.DB) error {
 	u.UUID = uuid.New()
 	return nil
 }
+
+type CreatedAutoLoginInfoRequest struct {
+	UserID  string `form:"user-id" json:"user-id" binding:"required"`
+	Comment string `form:"comment" json:"comment" binding:"omitempty"`
+}

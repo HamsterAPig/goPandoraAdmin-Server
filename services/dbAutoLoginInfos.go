@@ -27,3 +27,26 @@ func QueryAllAutoLoginInfosByUUID(UUID string) (model.AutoLoginInfo, error) {
 	}
 	return autoLoginInfo, nil
 }
+
+func CreateAutoLoginInfos(autoLoginInfo model.CreatedAutoLoginInfoRequest) (model.AutoLoginInfo, error) {
+	db, _ := database.GetDB()
+	var info model.AutoLoginInfo
+
+	info.Comment = autoLoginInfo.Comment
+	info.UserID = autoLoginInfo.UserID
+
+	var user model.UserInfo
+	res := db.Where("user_id = ?", autoLoginInfo.UserID).Find(&user)
+	if res.Error != nil {
+		return info, fmt.Errorf("failed to find user")
+	} else if res.RowsAffected == 0 {
+		return info, fmt.Errorf("user not found")
+	}
+	info.Token = user.Token
+
+	res = db.Save(&info)
+	if res.Error != nil {
+		return info, fmt.Errorf("failed to save auto login info to db")
+	}
+	return info, nil
+}
