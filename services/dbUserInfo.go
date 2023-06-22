@@ -29,11 +29,12 @@ func QueryUserInfoByUserID(userID string) (model.UserInfo, error) {
 func DeleteUserInfoByUserID(userID string) error {
 	db, _ := database.GetDB()
 	var user model.UserInfo
-	res := db.Where("user_id = ?", userID).Delete(&user)
-	if res.Error != nil {
-		return res.Error
+	res := db.Where("user_id = ?", userID).First(&user)
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("user not found")
 	}
-	return nil
+	res = db.Delete(&user)
+	return res.Error
 }
 
 // UpdateUserInfo 更新用户Token
