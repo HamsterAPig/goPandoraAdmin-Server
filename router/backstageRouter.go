@@ -1,13 +1,18 @@
 package router
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"goPandoraAdmin-Server/config"
 	"goPandoraAdmin-Server/controller"
 	"net/http"
 )
 
 func BackstageRouter() http.Handler {
 	r := gin.Default()
+	if config.Conf.AllowCors {
+		r.Use(cors.Default())
+	}
 	v1 := r.Group("/api/v1")
 	{
 		v1.Any("/users", controller.UserInfosManage)

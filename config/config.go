@@ -11,6 +11,7 @@ type VariableConfig struct {
 	ProxyNode    string `mapstructure:"proxy"`       // 代理地址
 	DatabasePath string `mapstructure:"database"`    // 数据库路径
 	DebugLevel   string `mapstructure:"debug-level"` // 日志等级
+	AllowCors    bool   `mapstructure:"allow-cors"`  // 允许跨域
 }
 
 var Conf = new(VariableConfig)
@@ -23,6 +24,7 @@ func ReadConfig() (*VariableConfig, error) {
 	pflag.StringP("listen", "l", "127.0.0.1:8080", "listen address")
 	pflag.StringP("proxy", "p", "", "proxy address")
 	pflag.StringP("database", "d", "./goPandora.db", "database path")
+	pflag.Bool("allow-cors", true, "allow cors")
 	pflag.Parse()
 
 	err := cmdViper.BindPFlags(pflag.CommandLine)
