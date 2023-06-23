@@ -25,7 +25,7 @@ func AutoLoginInfosManage(c *gin.Context) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, req)
+		c.JSON(http.StatusCreated, req)
 	default:
 		infos := services.QueryAllAutoLoginInfos()
 		c.JSON(http.StatusOK, infos)
@@ -43,7 +43,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusNoContent, gin.H{
 			"success": true,
 		})
 	default:

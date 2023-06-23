@@ -30,7 +30,7 @@ func UserInfosManage(c *gin.Context) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusCreated, user)
 	}
 }
 
@@ -55,7 +55,7 @@ func SingleUserInfosManage(c *gin.Context) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusNoContent, gin.H{
 			"success": true,
 		})
 	default:
