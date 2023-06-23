@@ -11,3 +11,10 @@ func QueryAllShareTokens() []model.ShareToken {
 	db.Find(&tokens)
 	return tokens
 }
+
+func QuerySingleShareToken(id string) model.ShareToken {
+	db, _ := database.GetDB()
+	var token model.ShareToken
+	db.Where("id = ?", id).Find(&token)
+	return token
+}
