@@ -28,7 +28,7 @@ func Auth0(userName string, password string, mfaCode string) (accessToken string
 
 	// 创建一个自定义的Transport
 	transport := &http.Transport{}
-	proxyURL := getProxyURL()
+	proxyURL := GetProxyURL()
 	if proxyURL != nil {
 		logger.Debug("using proxy", zap.String("url", proxyURL.String()))
 		transport.Proxy = http.ProxyURL(proxyURL) // 设置代理
@@ -212,8 +212,8 @@ func createCookieJar() *cookiejar.Jar {
 	return jar
 }
 
-// getProxyURL 获取代理地址
-func getProxyURL() *url.URL {
+// GetProxyURL 获取代理地址
+func GetProxyURL() *url.URL {
 	// 检查代理地址是否存在
 	// 如果存在则返回代理URL，否则返回nil
 	proxyURLStr := config.Conf.ProxyNode
