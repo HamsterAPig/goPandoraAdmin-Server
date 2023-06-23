@@ -19,7 +19,7 @@ type UserInfo struct {
 	RefreshToken string
 	UpdatedTime  time.Time `gorm:"autoUpdateTime"`
 	ExpiryTime   time.Time
-	Comment      string
+	Comment      *string
 }
 
 type CreateUserInfoRequest struct {

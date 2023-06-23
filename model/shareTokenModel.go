@@ -8,10 +8,10 @@ type ShareToken struct {
 	UniqueName    string
 	ExpiresTime   int64
 	ExpiresTimeAt time.Time
-	SiteLimit     string
+	SiteLimit     *string
 	SK            string    `gorm:"unique"`
 	UpdateTime    time.Time `gorm:"autoUpdateTime"`
-	Comment       string
+	Comment       *string
 }
 
 type fakeOpenShareToken struct {

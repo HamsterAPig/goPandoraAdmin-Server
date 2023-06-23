@@ -9,7 +9,7 @@ type AutoLoginInfo struct {
 	UUID    uuid.UUID `gorm:"primaryKey;type:char(36);not null;unique"`
 	UserID  string
 	Token   string
-	Comment string
+	Comment *string
 }
 
 // BeforeCreate 向User表插入数据后自动添加UUID
@@ -19,6 +19,6 @@ func (u *AutoLoginInfo) BeforeCreate(tx *gorm.DB) error {
 }
 
 type CreatedAutoLoginInfoRequest struct {
-	UserID  string `form:"user-id" json:"user-id" binding:"required"`
-	Comment string `form:"comment" json:"comment" binding:"omitempty"`
+	UserID  string  `form:"user-id" json:"user-id" binding:"required"`
+	Comment *string `form:"comment" json:"comment" binding:"omitempty"`
 }
