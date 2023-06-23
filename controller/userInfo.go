@@ -27,16 +27,10 @@ func UserInfosManage(c *gin.Context) {
 	}
 }
 
-// SingleUserInfosManage 更新单个用户Token
+// SingleUserInfosManage 单个用户管理
 func SingleUserInfosManage(c *gin.Context) {
 	userID := c.Param("userID")
 	switch c.Request.Method {
-	case http.MethodPatch:
-		info, err := services.UpdateUserInfo(userID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
-		}
-		c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))
 	case http.MethodDelete:
 		err := services.DeleteUserInfoByUserID(userID)
 		if err != nil {
@@ -57,4 +51,15 @@ func CheckAccessToken(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, services.RespondHandle(0, "healthy", nil))
+}
+
+// UpdateAccessToken 更新用户token
+func UpdateAccessToken(c *gin.Context) {
+	userID := c.Param("userID")
+	info, err := services.UpdateUserInfo(userID, c.Query("force"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))
 }

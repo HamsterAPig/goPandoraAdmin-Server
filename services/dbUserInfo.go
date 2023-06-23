@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"goPandoraAdmin-Server/database"
+	logger "goPandoraAdmin-Server/internal/log"
 	"goPandoraAdmin-Server/internal/pandora"
 	"goPandoraAdmin-Server/model"
 	"strings"
@@ -38,24 +39,37 @@ func DeleteUserInfoByUserID(userID string) error {
 }
 
 // UpdateUserInfo 更新用户Token
-func UpdateUserInfo(userID string) (model.UserInfo, error) {
-	db, _ := database.GetDB()
+func UpdateUserInfo(userID string, forceT string) (model.UserInfo, error) {
 	var user model.UserInfo
+	var force bool
+	if forceT == "true" || forceT == "True" {
+		force = true
+	} else {
+		force = false
+	}
+	db, _ := database.GetDB()
 	res := db.Where("user_id = ?", userID).Find(&user)
 	if res.RowsAffected == 0 {
 		return user, fmt.Errorf("user not found")
 	}
-	token, refreshToken, err := pandora.Auth0(user.Email, user.Password, "")
-	if err != nil {
-		return user, fmt.Errorf("auth0 error: %s", err)
+
+	needUpdate := user.ExpiryTime.Before(time.Now())
+	if needUpdate || force {
+		logger.Info("begin update token")
+		token, refreshToken, err := pandora.Auth0(user.Email, user.Password, "")
+		if err != nil {
+			return user, fmt.Errorf("auth0 error: %s", err)
+		}
+		user.Token = token
+		user.RefreshToken = refreshToken
+		_, err = pandora.CheckAccessToken(user.Token)
+		if err != nil {
+			return user, fmt.Errorf("check access token error: %s", err)
+		} else {
+			logger.Info("not need update token")
+		}
+		db.Save(&user)
 	}
-	user.Token = token
-	user.RefreshToken = refreshToken
-	_, err = pandora.CheckAccessToken(user.Token)
-	if err != nil {
-		return user, fmt.Errorf("check access token error: %s", err)
-	}
-	db.Save(&user)
 	return user, nil
 }
 
