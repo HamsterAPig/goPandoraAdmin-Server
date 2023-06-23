@@ -22,3 +22,11 @@ type fakeOpenShareToken struct {
 	TokenKey          string `json:"token_key"`
 	UniqueName        string `json:"unique_name"`
 }
+
+type CreateShareTokenRequest struct {
+	UserID      string  `form:"user-id" json:"user-id" binding:"required"`
+	UniqueName  string  `form:"unique-name" json:"unique-name" binding:"required"`
+	ExpiresTime int64   `form:"expires-time" json:"expires-time" binding:"required"`
+	SiteLimit   *string `form:"site-limit" json:"site-limit"`
+	Comment     *string `form:"comment" json:"comment"`
+}
