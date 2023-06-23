@@ -12,25 +12,18 @@ func UserInfosManage(c *gin.Context) {
 	switch c.Request.Method {
 	case http.MethodGet:
 		users := services.QueryAllUserInfo()
-		c.JSON(http.StatusOK, users)
+		c.JSON(http.StatusOK, services.RespondHandle(0, nil, users))
 	case http.MethodPost:
-
 		var createUser model.CreateUserInfoRequest
 		err := c.ShouldBind(&createUser)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-			return
+			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
 		}
 		user, err := services.AddUserInfo(createUser)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
+			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
 		}
-		c.JSON(http.StatusCreated, user)
+		c.JSON(http.StatusCreated, services.RespondHandle(0, nil, user))
 	}
 }
 
@@ -41,26 +34,18 @@ func SingleUserInfosManage(c *gin.Context) {
 	case http.MethodPatch:
 		info, err := services.UpdateUserInfo(userID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
+			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
 		}
-		c.JSON(http.StatusOK, info)
+		c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))
 	case http.MethodDelete:
 		err := services.DeleteUserInfoByUserID(userID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": err.Error(),
-			})
-			return
+			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
 		}
-		c.JSON(http.StatusNoContent, gin.H{
-			"success": true,
-		})
+		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
 	default:
 		user, _ := services.QueryUserInfoByUserID(userID)
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, services.RespondHandle(0, nil, user))
 	}
 }
 
@@ -68,12 +53,8 @@ func CheckAccessToken(c *gin.Context) {
 	userID := c.Param("userID")
 	err := services.CheckAccessToken(userID)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusOK, services.RespondHandle(-1, err.Error(), nil))
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-	})
+	c.JSON(http.StatusOK, services.RespondHandle(0, "healthy", nil))
 }
