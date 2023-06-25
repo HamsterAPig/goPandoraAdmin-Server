@@ -28,7 +28,7 @@ type FakeOpenShareTokenRespond struct {
 type CreateShareTokenRequest struct {
 	UserID            string  `form:"user-id" json:"user-id" binding:"required"`
 	UniqueName        string  `form:"unique-name" json:"unique-name" binding:"required"`
-	ExpiresTime       int64   `form:"expires-time" json:"expires-time" binding:"required"`
+	ExpiresTime       int64   `form:"expires-time" json:"expires-time" binding:"omitempty"`
 	SiteLimit         *string `form:"site-limit" json:"site-limit" binding:"omitempty"`
 	ShowConversations bool    `form:"show_conversations" json:"show_conversations" binding:"omitempty"`
 	ShowUserInfo      bool    `form:"show_userinfo" json:"show_userinfo" binding:"omitempty"`
