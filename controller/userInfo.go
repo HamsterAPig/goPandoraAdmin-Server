@@ -18,10 +18,12 @@ func UserInfosManage(c *gin.Context) {
 		err := c.ShouldBind(&createUser)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		user, err := services.AddUserInfo(createUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		c.JSON(http.StatusCreated, services.RespondHandle(0, nil, user))
 	}
@@ -35,6 +37,7 @@ func SingleUserInfosManage(c *gin.Context) {
 		err := services.DeleteUserInfoByUserID(userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
 	default:

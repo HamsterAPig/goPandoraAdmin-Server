@@ -35,6 +35,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		err := services.DeleteAutoLoginInfo(uuid)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
 	default:
@@ -42,6 +43,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		infos, err := services.QueryAllAutoLoginInfosByUUID(UUID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, infos))
 	}

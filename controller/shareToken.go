@@ -14,10 +14,12 @@ func ShareTokensManage(c *gin.Context) {
 		err := c.ShouldBind(&shareTokenInfo)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		token, err := services.AddShareToken(shareTokenInfo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		c.JSON(http.StatusCreated, services.RespondHandle(0, nil, token))
 	default:
@@ -33,6 +35,7 @@ func SingleShareTokenManage(c *gin.Context) {
 		err := services.DeleteShareToken(id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
 	default:
