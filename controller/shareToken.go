@@ -58,8 +58,8 @@ func SingleShareTokenManage(c *gin.Context) {
 }
 
 func UpdateShareToken(c *gin.Context) {
-	id := c.Param("id")
-	info, err := services.UpdateShareToken(id)
+	fk := c.Param("fk")
+	info, err := services.UpdateShareToken(fk)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
 		return
