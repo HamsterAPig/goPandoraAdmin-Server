@@ -59,6 +59,7 @@ func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error)
 	token.ShareToken = respond.TokenKey
 	token.ShowUserInfo = info.ShowUserInfo
 	token.ShowConversations = info.ShowConversations
+	token.Comment = info.Comment
 
 	var tmpModel model.ShareToken
 	res = db.Where("share_token = ?", respond.TokenKey).Find(&tmpModel)
@@ -68,11 +69,6 @@ func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error)
 			return token, fmt.Errorf("failed to create share token in database")
 		}
 	} else {
-		if info.Comment != nil {
-			token.Comment = info.Comment
-		} else {
-			token.Comment = tmpModel.Comment
-		}
 		res = db.Save(token)
 		if res.Error != nil {
 			return token, fmt.Errorf("failed to save share token")
