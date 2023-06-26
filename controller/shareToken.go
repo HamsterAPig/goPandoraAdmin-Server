@@ -29,9 +29,9 @@ func ShareTokensManage(c *gin.Context) {
 }
 
 func SingleShareTokenManage(c *gin.Context) {
+	id := c.Param("id")
 	switch c.Request.Method {
 	case http.MethodDelete:
-		id := c.Param("id")
 		err := services.DeleteShareToken(id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))

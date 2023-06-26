@@ -63,3 +63,20 @@ func DeleteAutoLoginInfo(uuid string) error {
 	res = db.Delete(&info)
 	return res.Error
 }
+
+func ChangeShareToken(id string, info model.ChangedAutoLoginInfoPatch) (model.AutoLoginInfo, error) {
+	db, _ := database.GetDB()
+	var token model.AutoLoginInfo
+	res := db.Where("UUID = ?", id).First(&token)
+	if res.RowsAffected == 0 {
+		return token, fmt.Errorf("share token not found")
+	}
+	if info.Comment != nil {
+		token.Comment = info.Comment
+	}
+	if info.UserID != nil {
+		token.UserID = *info.UserID
+	}
+	db.Save(&token)
+	return token, nil
+}

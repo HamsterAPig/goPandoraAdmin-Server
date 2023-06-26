@@ -22,3 +22,8 @@ type CreatedAutoLoginInfoRequest struct {
 	UserID  string  `form:"user-id" json:"user-id" binding:"required"`
 	Comment *string `form:"comment" json:"comment" binding:"omitempty"`
 }
+
+type ChangedAutoLoginInfoPatch struct {
+	UserID  *string `form:"user-id" json:"user-id" binding:"omitempty"`
+	Comment *string `form:"comment" json:"comment" binding:"omitempty"`
+}
