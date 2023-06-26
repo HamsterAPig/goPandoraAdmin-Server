@@ -15,11 +15,14 @@ func QueryAllShareTokens() []model.ShareToken {
 	return tokens
 }
 
-func QuerySingleShareToken(shareToken string) model.ShareToken {
+func QuerySingleShareToken(shareToken string) (model.ShareToken, error) {
 	db, _ := database.GetDB()
 	var token model.ShareToken
-	db.Where("share_token = ?", shareToken).Find(&token)
-	return token
+	res := db.Where("share_token = ?", shareToken).Find(&token)
+	if res.RowsAffected == 0 {
+		return token, fmt.Errorf("share token not found")
+	}
+	return token, nil
 }
 
 func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error) {

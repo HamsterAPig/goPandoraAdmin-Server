@@ -52,7 +52,11 @@ func SingleShareTokenManage(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, shareToken))
 	default:
-		sk := services.QuerySingleShareToken(fk)
+		sk, err := services.QuerySingleShareToken(fk)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
+		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, sk))
 	}
 }
