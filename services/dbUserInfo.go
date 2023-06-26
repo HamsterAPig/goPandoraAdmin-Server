@@ -75,7 +75,11 @@ func UpdateUserInfo(userID string, forceT string) (model.UserInfo, error) {
 
 func AddUserInfo(createInfo model.CreateUserInfoRequest) (model.UserInfo, error) {
 	var user model.UserInfo
-	accessToken, refreshToken, err := pandora.Auth0(createInfo.Email, createInfo.Password, *createInfo.MFA)
+	var mfaCode = ""
+	if createInfo.MFA != nil {
+		mfaCode = *createInfo.MFA
+	}
+	accessToken, refreshToken, err := pandora.Auth0(createInfo.Email, createInfo.Password, mfaCode)
 	if err != nil {
 		return user, fmt.Errorf("auth0 error: %s", err)
 	}
