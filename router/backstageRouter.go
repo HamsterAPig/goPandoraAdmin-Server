@@ -22,7 +22,7 @@ func BackstageRouter() http.Handler {
 
 		v1.Any("/auto-login-infos", controller.AutoLoginInfosManage)
 		v1.Any("/auto-login-infos/:UUID", controller.SingleAutoLoginInfosManage)
-		//v1.GET("/auto-login-infos/:UUID/update", controller.UpdateAutoLoginInfo)
+		v1.GET("/auto-login-infos/:UUID/update", controller.UpdateAutoLoginInfo)
 
 		v1.Any("/share-tokens", controller.ShareTokensManage)
 		v1.Any("/share-tokens/:fk", controller.SingleShareTokenManage)

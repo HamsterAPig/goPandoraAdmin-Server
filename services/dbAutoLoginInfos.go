@@ -80,3 +80,19 @@ func ChangeAutoLoginInfo(id string, info model.ChangedAutoLoginInfoPatch) (model
 	db.Save(&token)
 	return token, nil
 }
+
+func UpdateAutoLoginInfo(uuid string) (model.AutoLoginInfo, error) {
+	db, _ := database.GetDB()
+	var info model.AutoLoginInfo
+	res := db.Where("uuid = ?", uuid).First(&info)
+	if res.RowsAffected == 0 {
+		return info, fmt.Errorf("user not found")
+	}
+	userInfo, err := UpdateUserInfo(info.UserID, "")
+	if err != nil {
+		return info, fmt.Errorf("update user info error: %s", err)
+	}
+	info.Token = userInfo.Token
+	db.Save(&info)
+	return info, res.Error
+}

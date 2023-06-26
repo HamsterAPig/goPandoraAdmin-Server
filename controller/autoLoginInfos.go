@@ -61,3 +61,13 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, infos))
 	}
 }
+
+func UpdateAutoLoginInfo(c *gin.Context) {
+	uuid := c.Param("UUID")
+	info, err := services.UpdateAutoLoginInfo(uuid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))
+}

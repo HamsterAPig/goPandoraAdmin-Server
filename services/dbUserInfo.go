@@ -69,6 +69,7 @@ func UpdateUserInfo(userID string, forceT string) (model.UserInfo, error) {
 			logger.Info("not need update token")
 		}
 		db.Save(&user)
+		db.Where("user_id = ?", userID).Find(&user)
 	}
 	return user, nil
 }
