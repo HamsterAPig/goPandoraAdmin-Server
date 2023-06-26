@@ -45,7 +45,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
 			return
 		}
-		shareToken, err := services.ChangeShareToken(uuid, changeInfo)
+		shareToken, err := services.ChangeAutoLoginInfo(uuid, changeInfo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
 			return

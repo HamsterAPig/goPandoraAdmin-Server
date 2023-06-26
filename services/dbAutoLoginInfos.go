@@ -64,7 +64,7 @@ func DeleteAutoLoginInfo(uuid string) error {
 	return res.Error
 }
 
-func ChangeShareToken(id string, info model.ChangedAutoLoginInfoPatch) (model.AutoLoginInfo, error) {
+func ChangeAutoLoginInfo(id string, info model.ChangedAutoLoginInfoPatch) (model.AutoLoginInfo, error) {
 	db, _ := database.GetDB()
 	var token model.AutoLoginInfo
 	res := db.Where("UUID = ?", id).First(&token)
