@@ -38,6 +38,19 @@ func SingleShareTokenManage(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
+	case http.MethodPatch:
+		var changeInfo model.ChangedShareTokenPatch
+		err := c.ShouldBind(&changeInfo)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
+		}
+		shareToken, err := services.ChangeShareTokenInfo(id, changeInfo)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			return
+		}
+		c.JSON(http.StatusOK, services.RespondHandle(0, nil, shareToken))
 	default:
 		id := c.Param("id")
 		sk := services.QuerySingleShareToken(id)

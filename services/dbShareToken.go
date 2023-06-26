@@ -85,3 +85,29 @@ func DeleteShareToken(id string) error {
 	res = db.Delete(&info)
 	return res.Error
 }
+
+func ChangeShareTokenInfo(id string, info model.ChangedShareTokenPatch) (model.ShareToken, error) {
+	db, _ := database.GetDB()
+	var token model.ShareToken
+	res := db.Where("id = ?", id).First(&token)
+	if res.RowsAffected == 0 {
+		return token, fmt.Errorf("share token not found")
+	}
+	if info.Comment != nil {
+		token.Comment = info.Comment
+	}
+	if info.SiteLimit != nil {
+		token.SiteLimit = info.SiteLimit
+	}
+	if info.ShowUserInfo != nil {
+		token.ShowUserInfo = *info.ShowUserInfo
+	}
+	if info.ShowConversations != nil {
+		token.ShowConversations = *info.ShowConversations
+	}
+	if info.ExpiresTime != nil {
+		token.ExpiresTime = *info.ExpiresTime
+	}
+	db.Save(&token)
+	return token, nil
+}
