@@ -29,19 +29,24 @@ func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error)
 	db, _ := database.GetDB()
 	var token model.ShareToken
 	var user model.UserInfo
+	var respond model.FakeOpenShareTokenRespond
+	var fakeopen model.FakeOpenShareTokenRequest
+	_, err := UpdateUserInfo(info.UserID, "")
+	if err != nil {
+		return token, err
+	}
 	res := db.Where("user_id = ?", info.UserID).Find(&user)
 	if res.RowsAffected == 0 {
 		return token, fmt.Errorf("user not found")
 	}
 
-	var fakeopen model.FakeOpenShareTokenRequest
 	fakeopen.AccessToken = user.Token
 	fakeopen.ExpiresIn = info.ExpiresTime
 	fakeopen.ShowUserInfo = info.ShowUserInfo
 	fakeopen.ShowConversations = info.ShowConversations
 	fakeopen.UniqueName = info.UniqueName
 	fakeopen.SiteLimit = info.SiteLimit
-	respond, err := pandora.GetShareTokenByFakeopen(fakeopen)
+	respond, err = pandora.GetShareTokenByFakeopen(fakeopen)
 	if err != nil {
 		return token, fmt.Errorf("failed to get share token")
 	}
@@ -63,8 +68,12 @@ func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error)
 			return token, fmt.Errorf("failed to create share token in database")
 		}
 	} else {
-		tmpModel = token
-		res = db.Save(tmpModel)
+		if info.Comment != nil {
+			token.Comment = info.Comment
+		} else {
+			token.Comment = tmpModel.Comment
+		}
+		res = db.Save(token)
 		if res.Error != nil {
 			return token, fmt.Errorf("failed to save share token")
 		}
@@ -103,32 +112,41 @@ func ChangeShareTokenInfo(shareToken string, info model.ChangedShareTokenPatch) 
 	db, _ := database.GetDB()
 	var token model.ShareToken
 	res := db.Where("share_token = ?", shareToken).First(&token)
+	isNeedCallUpdate := true
 	if res.RowsAffected == 0 {
 		return token, fmt.Errorf("share token not found")
 	}
 	if info.Comment != nil {
+		isNeedCallUpdate = false
 		token.Comment = info.Comment
 	}
 	if info.SiteLimit != nil {
+		isNeedCallUpdate = true
 		token.SiteLimit = info.SiteLimit
 	}
 	if info.ShowUserInfo != nil {
+		isNeedCallUpdate = true
 		token.ShowUserInfo = *info.ShowUserInfo
 	}
 	if info.ShowConversations != nil {
+		isNeedCallUpdate = true
 		token.ShowConversations = *info.ShowConversations
 	}
 	if info.ExpiresTime != nil {
+		isNeedCallUpdate = true
 		token.ExpiresTime = *info.ExpiresTime
 	}
 	db.Save(&token)
+	if isNeedCallUpdate {
+		return UpdateShareToken(token.ShareToken)
+	}
 	return token, nil
 }
 
-func UpdateShareToken(share_token string) (model.ShareToken, error) {
+func UpdateShareToken(shareToken string) (model.ShareToken, error) {
 	db, _ := database.GetDB()
 	var token model.ShareToken
-	res := db.Where("share_token = ?", share_token).First(&token)
+	res := db.Where("share_token = ?", shareToken).First(&token)
 	if res.RowsAffected == 0 {
 		return token, fmt.Errorf("share token not found")
 	}
