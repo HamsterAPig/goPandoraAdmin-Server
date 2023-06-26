@@ -8,7 +8,7 @@ type ShareToken struct {
 	ExpiresTime       int64
 	ExpiresTimeAt     time.Time
 	SiteLimit         *string
-	SK                string    `gorm:"primary_key:unique"`
+	ShareToken        string    `gorm:"primary_key:unique"`
 	UpdateTime        time.Time `gorm:"autoUpdateTime"`
 	ShowConversations bool
 	ShowUserInfo      bool

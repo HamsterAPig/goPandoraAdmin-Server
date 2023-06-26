@@ -15,10 +15,10 @@ func QueryAllShareTokens() []model.ShareToken {
 	return tokens
 }
 
-func QuerySingleShareToken(sk string) model.ShareToken {
+func QuerySingleShareToken(shareToken string) model.ShareToken {
 	db, _ := database.GetDB()
 	var token model.ShareToken
-	db.Where("sk = ?", sk).Find(&token)
+	db.Where("share_token = ?", shareToken).Find(&token)
 	return token
 }
 
@@ -48,12 +48,12 @@ func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error)
 	token.ExpiresTime = info.ExpiresTime
 	token.ExpiresTimeAt = time.Unix(respond.ExpireAt, 0)
 	token.SiteLimit = &respond.SiteLimit
-	token.SK = respond.TokenKey
+	token.ShareToken = respond.TokenKey
 	token.ShowUserInfo = info.ShowUserInfo
 	token.ShowConversations = info.ShowConversations
 
 	var tmpModel model.ShareToken
-	res = db.Where("sk = ?", respond.TokenKey).Find(&tmpModel)
+	res = db.Where("share_token = ?", respond.TokenKey).Find(&tmpModel)
 	if res.RowsAffected == 0 {
 		res = db.Create(&token)
 		if res.Error != nil {
@@ -73,7 +73,7 @@ func AddShareToken(info model.CreateShareTokenRequest) (model.ShareToken, error)
 func DeleteShareToken(fk string) error {
 	db, _ := database.GetDB()
 	var info model.ShareToken
-	res := db.Where("sk = ?", fk).First(&info)
+	res := db.Where("share_token = ?", fk).First(&info)
 	if res.RowsAffected == 0 {
 		return fmt.Errorf("share token not found")
 	}
@@ -96,10 +96,10 @@ func DeleteShareToken(fk string) error {
 	return res.Error
 }
 
-func ChangeShareTokenInfo(sk string, info model.ChangedShareTokenPatch) (model.ShareToken, error) {
+func ChangeShareTokenInfo(shareToken string, info model.ChangedShareTokenPatch) (model.ShareToken, error) {
 	db, _ := database.GetDB()
 	var token model.ShareToken
-	res := db.Where("sk = ?", sk).First(&token)
+	res := db.Where("share_token = ?", shareToken).First(&token)
 	if res.RowsAffected == 0 {
 		return token, fmt.Errorf("share token not found")
 	}
@@ -122,10 +122,10 @@ func ChangeShareTokenInfo(sk string, info model.ChangedShareTokenPatch) (model.S
 	return token, nil
 }
 
-func UpdateShareToken(sk string) (model.ShareToken, error) {
+func UpdateShareToken(share_token string) (model.ShareToken, error) {
 	db, _ := database.GetDB()
 	var token model.ShareToken
-	res := db.Where("sk = ?", sk).First(&token)
+	res := db.Where("share_token = ?", share_token).First(&token)
 	if res.RowsAffected == 0 {
 		return token, fmt.Errorf("share token not found")
 	}
