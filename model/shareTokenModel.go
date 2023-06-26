@@ -3,13 +3,12 @@ package model
 import "time"
 
 type ShareToken struct {
-	ID                uint `gorm:"primary_key:autoIncrement"`
 	UserID            string
 	UniqueName        string
 	ExpiresTime       int64
 	ExpiresTimeAt     time.Time
 	SiteLimit         *string
-	SK                string    `gorm:"unique"`
+	SK                string    `gorm:"primary_key:unique"`
 	UpdateTime        time.Time `gorm:"autoUpdateTime"`
 	ShowConversations bool
 	ShowUserInfo      bool

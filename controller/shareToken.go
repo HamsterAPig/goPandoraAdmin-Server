@@ -29,10 +29,10 @@ func ShareTokensManage(c *gin.Context) {
 }
 
 func SingleShareTokenManage(c *gin.Context) {
-	id := c.Param("id")
+	fk := c.Param("fk")
 	switch c.Request.Method {
 	case http.MethodDelete:
-		err := services.DeleteShareToken(id)
+		err := services.DeleteShareToken(fk)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
 			return
@@ -45,15 +45,24 @@ func SingleShareTokenManage(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
 			return
 		}
-		shareToken, err := services.ChangeShareTokenInfo(id, changeInfo)
+		shareToken, err := services.ChangeShareTokenInfo(fk, changeInfo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
 			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, shareToken))
 	default:
-		id := c.Param("id")
-		sk := services.QuerySingleShareToken(id)
+		sk := services.QuerySingleShareToken(fk)
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, sk))
 	}
+}
+
+func UpdateShareToken(c *gin.Context) {
+	id := c.Param("id")
+	info, err := services.UpdateShareToken(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))
 }
