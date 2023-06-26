@@ -28,3 +28,8 @@ type CreateUserInfoRequest struct {
 	MFA      *string `form:"mfa" json:"mfa" binding:"omitempty"`
 	Comment  *string `form:"comment" json:"comment" binding:"omitempty"`
 }
+
+type ChangeUserInfoPatch struct {
+	Password *string `form:"password" json:"password" binding:"omitempty"`
+	Comment  *string `form:"comment" json:"comment" binding:"omitempty"`
+}

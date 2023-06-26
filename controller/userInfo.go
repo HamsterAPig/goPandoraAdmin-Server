@@ -40,6 +40,19 @@ func SingleUserInfosManage(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
+	case http.MethodPatch:
+		var changeUser model.ChangeUserInfoPatch
+		err := c.ShouldBind(&changeUser)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			return
+		}
+		user, err := services.ChangeUserInfo(userID, changeUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			return
+		}
+		c.JSON(http.StatusOK, services.RespondHandle(0, nil, user))
 	default:
 		user, _ := services.QueryUserInfoByUserID(userID)
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, user))

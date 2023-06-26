@@ -127,3 +127,20 @@ func CheckAccessToken(userID string) error {
 	}
 	return nil
 }
+
+func ChangeUserInfo(userID string, changeInfo model.ChangeUserInfoPatch) (model.UserInfo, error) {
+	var user model.UserInfo
+	db, _ := database.GetDB()
+	res := db.Where("user_id = ?", userID).Find(&user)
+	if res.RowsAffected == 0 {
+		return user, fmt.Errorf("user not found")
+	}
+	if changeInfo.Password != nil {
+		user.Password = *changeInfo.Password
+	}
+	if changeInfo.Comment != nil {
+		user.Comment = changeInfo.Comment
+	}
+	db.Save(&user)
+	return user, nil
+}
