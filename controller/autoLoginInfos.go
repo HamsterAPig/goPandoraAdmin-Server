@@ -53,7 +53,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, shareToken))
 	default:
 		UUID := c.Param("UUID")
-		infos, err := services.QueryAllAutoLoginInfosByUUID(UUID)
+		infos, err := services.QueryAutoLoginInfosByUUID(UUID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
 			return

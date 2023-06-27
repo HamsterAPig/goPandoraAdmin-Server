@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
+	logger "goPandoraAdmin-Server/internal/log"
 	"io"
 	"net/http"
 )
@@ -28,7 +30,21 @@ func refreshPostToken(url string, data RefreshData, userAgent string) (*http.Res
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", userAgent)
-	client := &http.Client{}
+	// 创建一个自定义的Transport
+	transport := &http.Transport{}
+	proxyURL := GetProxyURL()
+	if proxyURL != nil {
+		logger.Debug("using proxy", zap.String("url", proxyURL.String()))
+		transport.Proxy = http.ProxyURL(proxyURL) // 设置代理
+	}
+	client := http.Client{
+		Jar:       createCookieJar(),
+		Transport: transport,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			// 禁用跟随301跳转
+			return http.ErrUseLastResponse
+		},
+	}
 	rep, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("发送请求失败: %v", err)

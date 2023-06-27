@@ -2,8 +2,11 @@ package services
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"goPandoraAdmin-Server/database"
+	"goPandoraAdmin-Server/internal/pandora"
 	"goPandoraAdmin-Server/model"
+	"time"
 )
 
 // QueryAllAutoLoginInfos 查询所有自动登录信息
@@ -14,8 +17,8 @@ func QueryAllAutoLoginInfos() []model.AutoLoginInfo {
 	return autoLoginInfo
 }
 
-// QueryAllAutoLoginInfosByUUID 查询单个自动登录信息
-func QueryAllAutoLoginInfosByUUID(UUID string) (model.AutoLoginInfo, error) {
+// QueryAutoLoginInfosByUUID 查询单个自动登录信息
+func QueryAutoLoginInfosByUUID(UUID string) (interface{}, error) {
 	db, _ := database.GetDB()
 	var autoLoginInfo model.AutoLoginInfo
 	res := db.Where("uuid = ?", UUID).Find(&autoLoginInfo)
@@ -24,6 +27,17 @@ func QueryAllAutoLoginInfosByUUID(UUID string) (model.AutoLoginInfo, error) {
 	}
 	if res.RowsAffected == 0 {
 		return autoLoginInfo, fmt.Errorf("user not found")
+	}
+	ast, err := pandora.CheckAccessToken(autoLoginInfo.Token)
+	if err != nil {
+		if time.Unix(int64(ast.Exp), 0).Before(time.Now()) {
+			autoLoginInfo, err = UpdateAutoLoginInfo(autoLoginInfo.UUID.String())
+			if err != nil {
+				return nil, fmt.Errorf("failed to update auto login info, %v", zap.Error(err))
+			}
+		} else {
+			return autoLoginInfo, fmt.Errorf("failed to check token, %v", zap.Error(err))
+		}
 	}
 	return autoLoginInfo, nil
 }
