@@ -14,11 +14,13 @@ func ShareTokensManage(c *gin.Context) {
 		err := c.ShouldBind(&shareTokenInfo)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		token, err := services.AddShareToken(shareTokenInfo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusCreated, services.RespondHandle(0, nil, token))
@@ -35,6 +37,7 @@ func SingleShareTokenManage(c *gin.Context) {
 		err := services.DeleteShareToken(fk)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
@@ -43,11 +46,13 @@ func SingleShareTokenManage(c *gin.Context) {
 		err := c.ShouldBind(&changeInfo)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		shareToken, err := services.ChangeShareTokenInfo(fk, changeInfo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, shareToken))
@@ -55,6 +60,7 @@ func SingleShareTokenManage(c *gin.Context) {
 		sk, err := services.QuerySingleShareToken(fk)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, sk))
@@ -66,6 +72,7 @@ func UpdateShareToken(c *gin.Context) {
 	info, err := services.UpdateShareToken(fk)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+		c.Abort()
 		return
 	}
 	c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))

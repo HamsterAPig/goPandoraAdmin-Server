@@ -14,11 +14,13 @@ func AutoLoginInfosManage(c *gin.Context) {
 		var autoLoginInfo model.CreatedAutoLoginInfoRequest
 		if err := c.ShouldBind(&autoLoginInfo); err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		req, err := services.CreateAutoLoginInfos(autoLoginInfo)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusCreated, services.RespondHandle(0, nil, req))
@@ -35,6 +37,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		err := services.DeleteAutoLoginInfo(uuid)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
@@ -43,11 +46,13 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		err := c.ShouldBind(&changeInfo)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		shareToken, err := services.ChangeAutoLoginInfo(uuid, changeInfo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, shareToken))
@@ -56,6 +61,7 @@ func SingleAutoLoginInfosManage(c *gin.Context) {
 		infos, err := services.QueryAutoLoginInfosByUUID(UUID)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, infos))
@@ -67,6 +73,7 @@ func UpdateAutoLoginInfo(c *gin.Context) {
 	info, err := services.UpdateAutoLoginInfo(uuid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+		c.Abort()
 		return
 	}
 	c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))

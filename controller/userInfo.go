@@ -18,11 +18,13 @@ func UserInfosManage(c *gin.Context) {
 		err := c.ShouldBind(&createUser)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		user, err := services.AddUserInfo(createUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusCreated, services.RespondHandle(0, nil, user))
@@ -37,6 +39,7 @@ func SingleUserInfosManage(c *gin.Context) {
 		err := services.DeleteUserInfoByUserID(userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusNoContent, services.RespondHandle(0, nil, nil))
@@ -45,11 +48,13 @@ func SingleUserInfosManage(c *gin.Context) {
 		err := c.ShouldBind(&changeUser)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		user, err := services.ChangeUserInfo(userID, changeUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+			c.Abort()
 			return
 		}
 		c.JSON(http.StatusOK, services.RespondHandle(0, nil, user))
@@ -64,6 +69,7 @@ func CheckAccessToken(c *gin.Context) {
 	err := services.CheckAccessToken(userID)
 	if err != nil {
 		c.JSON(http.StatusOK, services.RespondHandle(-1, err.Error(), nil))
+		c.Abort()
 		return
 	}
 	c.JSON(http.StatusOK, services.RespondHandle(0, "healthy", nil))
@@ -75,6 +81,7 @@ func UpdateAccessToken(c *gin.Context) {
 	info, err := services.UpdateUserInfo(userID, c.Query("force"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, services.RespondHandle(-1, err.Error(), nil))
+		c.Abort()
 		return
 	}
 	c.JSON(http.StatusOK, services.RespondHandle(0, nil, info))
