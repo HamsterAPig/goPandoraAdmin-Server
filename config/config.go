@@ -7,11 +7,12 @@ import (
 )
 
 type VariableConfig struct {
-	Listen       string `mapstructure:"listen"`      // 监听地址
-	ProxyNode    string `mapstructure:"proxy"`       // 代理地址
-	DatabasePath string `mapstructure:"database"`    // 数据库路径
-	DebugLevel   string `mapstructure:"debug-level"` // 日志等级
-	AllowCors    bool   `mapstructure:"allow-cors"`  // 允许跨域
+	Listen        string `mapstructure:"listen"`          // 监听地址
+	ProxyNode     string `mapstructure:"proxy"`           // 代理地址
+	DatabasePath  string `mapstructure:"database"`        // 数据库路径
+	DebugLevel    string `mapstructure:"debug-level"`     // 日志等级
+	AllowCors     bool   `mapstructure:"allow-cors"`      // 允许跨域
+	EnableUUIDURI bool   `mapstructure:"enable-uuid-uri"` // API路径加入UUID
 }
 
 var Conf = new(VariableConfig)
@@ -25,6 +26,7 @@ func ReadConfig() (*VariableConfig, error) {
 	pflag.StringP("proxy", "p", "", "proxy address")
 	pflag.StringP("database", "d", "./goPandora.db", "database path")
 	pflag.Bool("allow-cors", true, "allow cors")
+	pflag.Bool("enable-uuid-uri", true, "enable uuid uri")
 	pflag.Parse()
 
 	err := cmdViper.BindPFlags(pflag.CommandLine)
