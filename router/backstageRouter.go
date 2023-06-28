@@ -28,5 +28,6 @@ func BackstageRouter() http.Handler {
 		v1.Any("/share-tokens/:fk", controller.SingleShareTokenManage)
 		v1.GET("/share-tokens/:fk/update", controller.UpdateShareToken)
 	}
+	r.GET("/auto-login-infos/:UUID", controller.SingleAutoLoginInfosManage)
 	return r
 }
