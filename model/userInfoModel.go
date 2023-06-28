@@ -13,7 +13,8 @@ const (
 type UserInfo struct {
 	Email        string
 	Password     string
-	UserID       string  `gorm:"primary_key:unique"`
+	UserID       string `gorm:"primary_key:unique"`
+	MFA          *string
 	Sub          SubEnum `gorm:type:enum("google-oauth2","windowslive", "auth0") default:"auth0"`
 	Token        string
 	RefreshToken string

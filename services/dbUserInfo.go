@@ -57,17 +57,16 @@ func UpdateUserInfo(userID string, forceT string) (model.UserInfo, error) {
 	if needUpdate || force {
 		if user.Sub == model.OpenAI {
 			logger.Info("begin update token")
-			token, refreshToken, err := pandora.Auth0(user.Email, user.Password, "")
+			var info model.CreateUserInfoRequest
+			info.Email = user.Email
+			info.Password = user.Password
+			info.MFA = user.MFA
+			info.Comment = user.Comment
+
+			var err error
+			user, err = AddUserInfo(info)
 			if err != nil {
-				return user, fmt.Errorf("auth0 error: %s", err)
-			}
-			user.Token = token
-			user.RefreshToken = refreshToken
-			_, err = pandora.CheckAccessToken(user.Token)
-			if err != nil {
-				return user, fmt.Errorf("check access token error: %s", err)
-			} else {
-				logger.Info("not need update token")
+				return user, fmt.Errorf("add user info error: %s", err)
 			}
 		} else {
 			logger.Info("begin update token by refresh token")
@@ -76,9 +75,13 @@ func UpdateUserInfo(userID string, forceT string) (model.UserInfo, error) {
 				return user, fmt.Errorf("refresh token error: %s", err)
 			}
 			user.Token = token
+			payload, err := pandora.CheckAccessToken(user.Token)
+			if err != nil {
+				return user, fmt.Errorf("check access token error: %s", err)
+			}
+			user.ExpiryTime = time.Unix(int64(payload.Exp), 0)
+			db.Save(&user)
 		}
-		db.Save(&user)
-		db.Where("user_id = ?", userID).Find(&user)
 	}
 	return user, nil
 }
