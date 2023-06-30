@@ -6,12 +6,13 @@ import (
 	"goPandoraAdmin-Server/config"
 	"goPandoraAdmin-Server/controller"
 	"net/http"
+	"time"
 )
 
 func BackstageRouter() http.Handler {
 	r := gin.Default()
 	if config.Conf.AllowCors {
-		r.Use(cors.Default())
+		r.Use(Default())
 	}
 	v1 := r.Group(config.Conf.EnableUUIDURI + "/api/v1")
 	{
@@ -30,4 +31,21 @@ func BackstageRouter() http.Handler {
 	}
 	r.GET("/auto-login-infos/:UUID", controller.SingleAutoLoginInfosManage)
 	return r
+}
+
+// DefaultConfig returns a generic default configuration mapped to localhost.
+func DefaultConfig() cors.Config {
+	return cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}
+}
+
+// Default returns the location middleware with default configuration.
+func Default() gin.HandlerFunc {
+	corsConfig := DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	return cors.New(corsConfig)
 }
