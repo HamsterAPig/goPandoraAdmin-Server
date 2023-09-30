@@ -85,19 +85,21 @@ func DeleteShareToken(fk string) error {
 	if res.RowsAffected == 0 {
 		return fmt.Errorf("share token not found")
 	}
-	var user model.UserInfo
-	db.Where("user_id = ?", info.UserID).Find(&user)
+	if info.ExpiresTimeAt.After(time.Now()) {
+		var user model.UserInfo
+		db.Where("user_id = ?", info.UserID).Find(&user)
 
-	var fakeopen model.FakeOpenShareTokenRequest
-	fakeopen.AccessToken = user.Token
-	fakeopen.ExpiresIn = info.ExpiresTime
-	fakeopen.ShowUserInfo = info.ShowUserInfo
-	fakeopen.ShowConversations = info.ShowConversations
-	fakeopen.UniqueName = info.UniqueName
-	fakeopen.SiteLimit = info.SiteLimit
-	_, err := pandora.GetShareTokenByFakeopen(fakeopen)
-	if err != nil {
-		return fmt.Errorf("failed to delete share token on fake open")
+		var fakeopen model.FakeOpenShareTokenRequest
+		fakeopen.AccessToken = user.Token
+		fakeopen.ExpiresIn = info.ExpiresTime
+		fakeopen.ShowUserInfo = info.ShowUserInfo
+		fakeopen.ShowConversations = info.ShowConversations
+		fakeopen.UniqueName = info.UniqueName
+		fakeopen.SiteLimit = info.SiteLimit
+		_, err := pandora.GetShareTokenByFakeopen(fakeopen)
+		if err != nil {
+			return fmt.Errorf("failed to delete share token on fake open")
+		}
 	}
 
 	res = db.Delete(&info)
