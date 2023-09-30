@@ -55,33 +55,18 @@ func UpdateUserInfo(userID string, forceT string) (model.UserInfo, error) {
 
 	needUpdate := user.ExpiryTime.Before(time.Now())
 	if needUpdate || force {
-		if user.Sub == model.OpenAI {
-			logger.Info("begin update token")
-			var info model.CreateUserInfoRequest
-			info.Email = user.Email
-			info.Password = user.Password
-			info.MFA = user.MFA
-			info.Comment = user.Comment
-
-			var err error
-			user, err = AddUserInfo(info)
-			if err != nil {
-				return user, fmt.Errorf("add user info error: %s", err)
-			}
-		} else {
-			logger.Info("begin update token by refresh token")
-			token, err := pandora.GetTokenByRefreshToken(user.RefreshToken)
-			if err != nil {
-				return user, fmt.Errorf("refresh token error: %s", err)
-			}
-			user.Token = token
-			payload, err := pandora.CheckAccessToken(user.Token)
-			if err != nil {
-				return user, fmt.Errorf("check access token error: %s", err)
-			}
-			user.ExpiryTime = time.Unix(int64(payload.Exp), 0)
-			db.Save(&user)
+		logger.Info("begin update token by refresh token")
+		token, err := pandora.GetTokenByRefreshToken(user.RefreshToken)
+		if err != nil {
+			return user, fmt.Errorf("refresh token error: %s", err)
 		}
+		user.Token = token
+		payload, err := pandora.CheckAccessToken(user.Token)
+		if err != nil {
+			return user, fmt.Errorf("check access token error: %s", err)
+		}
+		user.ExpiryTime = time.Unix(int64(payload.Exp), 0)
+		db.Save(&user)
 	}
 	return user, nil
 }
